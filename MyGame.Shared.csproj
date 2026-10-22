@@ -4,5 +4,7 @@
     <RootNamespace>MyGame</RootNamespace>
     <LangVersion>9.0</LangVersion>
     <Nullable>disable</Nullable>
+    <BaseOutputPath>Build~\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>Build~\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
 </Project>
