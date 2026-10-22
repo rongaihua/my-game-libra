@@ -1,0 +1,7 @@
+{
+  "name": "com.rongaihua.my-game-libra",
+  "version": "0.1.0",
+  "displayName": "My Game Libra",
+  "description": "局域网游戏共用管理器",
+  "unity": "2022.3"
+}
