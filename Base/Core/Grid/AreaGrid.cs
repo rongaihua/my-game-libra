@@ -2,7 +2,7 @@
 // Copyright (c) WithMe8 2023-2030
 // Author: rongaihua
 // Date: 2026-10-22
-// Desc: 5 行 9 列地盘，按配额铺色并在保持四块连通时交换
+// Desc: 5 行 9 列地盘，按种子分配配额并在保持四块连通时交换
 //---------------------------------------------------------------------------------------
 
 using System;
@@ -11,8 +11,8 @@ namespace MyGame
 {
 
     /// <summary>
-    /// 5 行 9 列的地盘。按 9:11:12:13 顺序铺色，再交换格子；
-    /// 一次交换后若不再是 4 个四邻域连通块，就换回去。
+    /// 5 行 9 列的地盘。格子数固定为 9、11、12、13，开局按种子分给四种颜色，
+    /// 再交换格子；一次交换后若不再是 4 个四邻域连通块，就换回去。
     /// </summary>
     public sealed class AreaGrid
     {
@@ -38,9 +38,14 @@ namespace MyGame
         public const int RegionCount = 4;
 
         /// <summary>
-        /// 四种颜色的格子配额，顺序为红、蓝、黄、绿。
+        /// 四种格子数。开局打乱后分给红、蓝、黄、绿。
         /// </summary>
-        private static readonly int[] Quotas = { 9, 11, 12, 13 };
+        private static readonly int[] QuotaTemplate = { 9, 11, 12, 13 };
+
+        /// <summary>
+        /// 本局每种颜色的格子数，下标为红、蓝、黄、绿。
+        /// </summary>
+        private readonly int[] mQuotas = { 9, 11, 12, 13 };
 
         /// <summary>
         /// 四邻域的列偏移。
@@ -84,7 +89,7 @@ namespace MyGame
         /// <returns>配额。</returns>
         public int Quota(int region)
         {
-            return Quotas[region];
+            return mQuotas[region];
         }
 
         /// <summary>
@@ -137,19 +142,20 @@ namespace MyGame
         }
 
         /// <summary>
-        /// 按配额铺色，再做若干次仍保持四块连通的随机交换。
+        /// 按种子打乱四种格子数并铺色，再做若干次仍保持四块连通的随机交换。
         /// </summary>
         /// <param name="seed">随机种子。</param>
         /// <param name="acceptedSwaps">希望成功的交换次数。</param>
         public void Generate(int seed, int acceptedSwaps)
         {
-            FillInOrder();
             if (acceptedSwaps < 0)
             {
                 acceptedSwaps = 0;
             }
 
             var random = new Random(seed);
+            AssignQuotas(random);
+            FillInOrder();
             var accepted = 0;
             var attempts = 0;
             while (accepted < acceptedSwaps && attempts < 20000)
@@ -163,14 +169,34 @@ namespace MyGame
         }
 
         /// <summary>
-        /// 按配额顺序把格子涂满。
+        /// 把 9、11、12、13 打乱分给四种颜色。
+        /// </summary>
+        /// <param name="random">本局随机数。</param>
+        private void AssignQuotas(Random random)
+        {
+            for (var i = 0; i < RegionCount; i++)
+            {
+                mQuotas[i] = QuotaTemplate[i];
+            }
+
+            for (var i = RegionCount - 1; i > 0; i--)
+            {
+                var swapIndex = random.Next(i + 1);
+                var quota = mQuotas[i];
+                mQuotas[i] = mQuotas[swapIndex];
+                mQuotas[swapIndex] = quota;
+            }
+        }
+
+        /// <summary>
+        /// 按本局配额把格子涂满。
         /// </summary>
         private void FillInOrder()
         {
             var index = 0;
             for (var region = 0; region < RegionCount; region++)
             {
-                var quota = Quotas[region];
+                var quota = mQuotas[region];
                 for (var i = 0; i < quota; i++)
                 {
                     mOwners[index++] = (byte)region;
