@@ -39,6 +39,18 @@ namespace MyGame
         }
 
         /// <summary>
+        /// 全部模块初始化完成后执行一次启动。对照 ChatRoom 的 <c>OnStart</c>：
+        /// 需要「别的管理器也已就绪」的逻辑放这里，别放 OnInit。
+        /// </summary>
+        internal void Start()
+        {
+            if (!IsDestroyed)
+            {
+                OnStart();
+            }
+        }
+
+        /// <summary>
         /// 推进一帧。已销毁的模块不再更新。
         /// </summary>
         /// <param name="deltaMs">距上一帧的毫秒数。</param>
@@ -71,6 +83,13 @@ namespace MyGame
         /// </summary>
         /// <param name="deltaMs">距上一帧的毫秒数。</param>
         protected virtual void OnUpdate(int deltaMs)
+        {
+        }
+
+        /// <summary>
+        /// 全部模块初始化完成后调用一次。
+        /// </summary>
+        protected virtual void OnStart()
         {
         }
     }

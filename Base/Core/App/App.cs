@@ -104,6 +104,12 @@ namespace MyGame
                 }
             }
 
+            // 全部初始化成功后再统一启动，让 OnStart 里可以安全访问别的管理器
+            for (var i = 0; i < mModules.Count; i++)
+            {
+                mModules[i].Start();
+            }
+
             return true;
         }
 
