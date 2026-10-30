@@ -44,6 +44,11 @@ namespace MyGame
         public static UIMgr UIMgr { get; private set; }
 
         /// <summary>
+        /// 音乐管理器。
+        /// </summary>
+        public static MusicMgr MusicMgr { get; private set; }
+
+        /// <summary>
         /// 音效管理器。
         /// </summary>
         public static SoundMgr SoundMgr { get; private set; }
@@ -72,6 +77,7 @@ namespace MyGame
             var app = new App();
             var resMgr = app.Add<ResMgr>();
             var uiMgr = app.Add<UIMgr>();
+            var musicMgr = app.Add<MusicMgr>();
             var soundMgr = app.Add<SoundMgr>();
 
             if (!app.Init())
@@ -86,6 +92,7 @@ namespace MyGame
             Objects = app.Objects;
             ResMgr = resMgr;
             UIMgr = uiMgr;
+            MusicMgr = musicMgr;
             SoundMgr = soundMgr;
             return true;
         }
@@ -107,6 +114,7 @@ namespace MyGame
             Objects = null;
             ResMgr = null;
             UIMgr = null;
+            MusicMgr = null;
             SoundMgr = null;
         }
 
